@@ -50,13 +50,11 @@ class ElectronGoogleOAuth2 extends EventEmitter {
   /**
    * Create a new instance of ElectronGoogleOAuth2
    * @param {string} clientId - Google Client ID
-   * @param {string} clientSecret - Google Client Secret
    * @param {string[]} scopes - Google scopes. 'profile' and 'email' will always be present
    * @param {Partial<ElectronGoogleOAuth2Options>} options
    */
   constructor(
     clientId: string,
-    clientSecret: string,
     scopes: string[],
     options: Partial<ElectronGoogleOAuth2Options> = defaultElectronGoogleOAuth2Options,
   ) {
@@ -66,11 +64,10 @@ class ElectronGoogleOAuth2 extends EventEmitter {
     if (!scopes.includes('email')) scopes.push('email');
     this.scopes = scopes;
     this.options = { ...defaultElectronGoogleOAuth2Options, ...options };
-    this.oauth2Client = new OAuth2Client(
+    this.oauth2Client = new OAuth2Client({
       clientId,
-      clientSecret,
-      `http://127.0.0.1:${this.options.loopbackInterfaceRedirectionPort}/callback`
-    );
+      redirectUri: `http://127.0.0.1:${this.options.loopbackInterfaceRedirectionPort}/callback`
+    });
     this.oauth2Client.on('tokens', (tokens) => {
       this.emit('tokens', tokens);
     });
